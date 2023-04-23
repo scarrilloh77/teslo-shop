@@ -1,5 +1,5 @@
 import { ShopLayout } from '@/components/layouts';
-import { ProductSlideShow } from '@/components/products';
+import { ProductSlideShow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
 import { initialData } from '@/database/products';
 import { Box, Button, Grid, Typography } from '@mui/material';
@@ -24,6 +24,10 @@ const ProductPage = () => {
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
               <ItemCounter />
+              <SizeSelector
+                selectedSize={product.sizes[0]}
+                sizes={product.sizes}
+              />
             </Box>
             <Button color="secondary" className="circular-btn">
               Agregar al carrito
