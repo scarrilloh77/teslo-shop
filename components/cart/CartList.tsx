@@ -16,7 +16,11 @@ const productsInCart = [
   initialData.products[2],
 ];
 
-export const CartList = () => {
+interface Props {
+  editable?: boolean;
+}
+
+export const CartList = ({ editable = false }: Props) => {
   return (
     <>
       {productsInCart.map((product) => (
@@ -39,7 +43,11 @@ export const CartList = () => {
             <Typography variant="body1">
               Talla: <strong>M</strong>
             </Typography>
-            <ItemCounter />
+            {editable ? (
+              <ItemCounter />
+            ) : (
+              <Typography variant="h5">3 items</Typography>
+            )}
           </Grid>
           <Grid
             item
@@ -49,9 +57,11 @@ export const CartList = () => {
             flexDirection="column"
           >
             <Typography variant="subtitle1">${product.price}</Typography>
-            <Button variant="text" color="secondary">
-              Remover
-            </Button>
+            {editable && (
+              <Button variant="text" color="secondary">
+                Remover
+              </Button>
+            )}
           </Grid>
         </Grid>
       ))}
