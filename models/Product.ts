@@ -16,7 +16,7 @@ const productSchema = new Schema(
         },
       },
     ],
-    slug: { type: Number, required: true, unique: true },
+    slug: { type: String, required: true, unique: true },
     tags: [{ type: String }],
     title: { type: String, required: true },
     type: {
