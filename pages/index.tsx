@@ -2,12 +2,10 @@ import { Typography } from '@mui/material';
 import { ShopLayout } from '@/components/layouts';
 import { ProductList } from '@/components/products';
 import { useProducts } from '@/hooks';
-
-const fetcher = (...args: [key: string]) =>
-  fetch(...args).then((res) => res.json());
+import { FullScreenLoading } from '@/components/ui';
 
 export default function Home() {
-  const { products, isLoading, isError } = useProducts('/products');
+  const { products, isLoading } = useProducts('/products');
 
   return (
     <ShopLayout
@@ -21,7 +19,7 @@ export default function Home() {
         Todos los productos
       </Typography>
 
-      {isLoading ? <h1>Cargando...</h1> : <ProductList products={products} />}
+      {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
     </ShopLayout>
   );
 }
