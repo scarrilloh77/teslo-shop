@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage, GetStaticPaths, GetStaticProps } from 'next';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { ShopLayout } from '@/components/layouts';
 import { ProductSlideShow, SizeSelector } from '@/components/products';
@@ -56,9 +56,45 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   );
 };
 
-// getServerSideProps: Generates page from server. Cada vez que venga un request a esta vista, el servidor va a procesar y renderizar y generar la respuesta, lo cual se quiere evitar.
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { slug } = params as { slug: string };
+// getServerSideProps (SSR): Generates page from server. Cada vez que venga un request a esta vista, el servidor va a procesar y renderizar y generar la respuesta, lo cual se quiere evitar.
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//   const { slug } = params as { slug: string };
+//   const product = await dbProducts.getProductBySlug(slug);
+
+//   if (!product) {
+//     return {
+//       redirect: {
+//         destination: '/',
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       product,
+//     },
+//   };
+// };
+
+// Build time:
+export const getStaticPaths: GetStaticPaths = async (ctx) => {
+  const productSlugs = await dbProducts.getAllProductsSlugs();
+
+  return {
+    paths: productSlugs.map(({ slug }) => ({
+      params: {
+        slug,
+      },
+    })),
+    fallback: 'blocking',
+  };
+};
+
+import {} from 'next';
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug = '' } = params as { slug: string };
   const product = await dbProducts.getProductBySlug(slug);
 
   if (!product) {
@@ -74,6 +110,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: {
       product,
     },
+    revalidate: 60 * 60 * 24,
   };
 };
 
