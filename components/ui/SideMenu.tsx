@@ -58,6 +58,7 @@ export const SideMenu = () => {
               onKeyPress={(e) => (e.key === 'Enter' ? onSearchTerm() : null)}
               type="text"
               placeholder="Buscar..."
+              autoFocus
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton onClick={onSearchTerm}>
