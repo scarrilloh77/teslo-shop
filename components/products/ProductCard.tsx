@@ -7,6 +7,7 @@ import {
   Box,
   Typography,
   Link,
+  Chip,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import NextLink from 'next/link';
@@ -42,6 +43,19 @@ export const ProductCard = ({ product }: Props) => {
         >
           <Link>
             <CardActionArea>
+              {product.inStock === 0 && (
+                <Chip
+                  color="primary"
+                  label="No hay disponibles"
+                  sx={{
+                    position: 'absolute',
+                    zIndex: 99,
+                    top: '10px',
+                    left: '10px',
+                  }}
+                />
+              )}
+
               <CardMedia
                 component="img"
                 className="fadeIn"
