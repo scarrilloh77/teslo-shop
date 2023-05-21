@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { NextPage, GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import { ShopLayout } from '@/components/layouts';
 import { ProductSlideShow, SizeSelector } from '@/components/products';
@@ -11,6 +13,8 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+  const router = useRouter();
+
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
     image: product.images[0],
@@ -31,7 +35,8 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   };
 
   const onAddProduct = () => {
-    console.log({ tempCartProduct });
+    if (!tempCartProduct.size) return;
+    router.push('/cart');
   };
 
   return (
@@ -124,9 +129,6 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     fallback: 'blocking',
   };
 };
-
-import {} from 'next';
-import { useState } from 'react';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug = '' } = params as { slug: string };

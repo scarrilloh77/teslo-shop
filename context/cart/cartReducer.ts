@@ -21,6 +21,11 @@ export const cartReducer = (
         ...state,
       };
 
+    case '[Cart] - Add Product':
+      return {
+        ...state,
+      };
+
     default:
       return state;
   }
