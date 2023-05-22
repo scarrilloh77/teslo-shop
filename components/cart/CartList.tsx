@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { CartContext } from '@/context';
+import { ItemCounter } from '../ui';
 
 interface Props {
   editable?: boolean;
@@ -39,14 +40,17 @@ export const CartList = ({ editable = false }: Props) => {
             <Typography variant="body1">
               Talla: <strong>{product.size}</strong>
             </Typography>
-            {/* {editable ? (
-              <ItemCounter   
-              currentValue={},
-              maxValue={},
-              updatedQuantity={} />
-            ) : ( */}
-            <Typography variant="h5">{`${product.quantity} items`}</Typography>
-            {/* )} */}
+            {editable ? (
+              <ItemCounter
+                currentValue={product.quantity}
+                maxValue={10}
+                updatedQuantity={() => {}}
+              />
+            ) : (
+              <Typography variant="h5">{`${product.quantity} ${
+                product.quantity > 1 ? 'productos' : 'producto'
+              }`}</Typography>
+            )}
           </Grid>
           <Grid
             item
