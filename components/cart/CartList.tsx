@@ -1,4 +1,5 @@
-import { initialData } from '@/database/products';
+import { useContext } from 'react';
+import NextLink from 'next/link';
 import {
   Button,
   CardActionArea,
@@ -7,30 +8,25 @@ import {
   Link,
   Typography,
 } from '@mui/material';
-import NextLink from 'next/link';
-import { ItemCounter } from '../ui';
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+import { CartContext } from '@/context';
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList = ({ editable = false }: Props) => {
+  const { cart } = useContext(CartContext);
+
   return (
     <>
-      {productsInCart.map((product) => (
+      {cart.map((product) => (
         <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
           <Grid item xs={3}>
             <NextLink href="/" passHref legacyBehavior>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images[0]}`}
+                    image={`/products/${product.image}`}
                     component="img"
                     sx={{ borderRadius: '5px' }}
                   ></CardMedia>
@@ -41,13 +37,16 @@ export const CartList = ({ editable = false }: Props) => {
           <Grid item xs={7}>
             <Typography variant="body1">{product.title}</Typography>
             <Typography variant="body1">
-              Talla: <strong>M</strong>
+              Talla: <strong>{product.size}</strong>
             </Typography>
-            {editable ? (
-              <ItemCounter />
-            ) : (
-              <Typography variant="h5">3 items</Typography>
-            )}
+            {/* {editable ? (
+              <ItemCounter   
+              currentValue={},
+              maxValue={},
+              updatedQuantity={} />
+            ) : ( */}
+            <Typography variant="h5">{`${product.quantity} items`}</Typography>
+            {/* )} */}
           </Grid>
           <Grid
             item
