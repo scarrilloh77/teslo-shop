@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 import { db } from '../../../database';
 import { User } from '../../../models';
-import { jwt } from '@/utils';
+import { jwt, validations } from '@/utils';
 
 type Data =
   | { message: string }
@@ -52,6 +52,10 @@ const registerUser = async (
     return res
       .status(400)
       .json({ message: 'El nombre debe ser de 2 caracteres' });
+  }
+
+  if (!validations.isValidEmail(email)) {
+    return res.status(400).json({ message: 'El correo no es valido!' });
   }
 
   await db.connect();
