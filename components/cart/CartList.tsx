@@ -10,20 +10,34 @@ import {
 } from '@mui/material';
 import { CartContext } from '@/context';
 import { ItemCounter } from '../ui';
+import { ICartProduct } from '@/interfaces';
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList = ({ editable = false }: Props) => {
-  const { cart } = useContext(CartContext);
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const onNewCartQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number
+  ) => {
+    product.quantity = newQuantityValue;
+    updateCartQuantity(product);
+  };
 
   return (
     <>
       {cart.map((product) => (
-        <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
+        <Grid
+          container
+          spacing={2}
+          key={product.slug + product.size}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
-            <NextLink href="/" passHref legacyBehavior>
+            <NextLink href={`/product/${product.slug}`} passHref legacyBehavior>
               <Link>
                 <CardActionArea>
                   <CardMedia
@@ -44,7 +58,9 @@ export const CartList = ({ editable = false }: Props) => {
               <ItemCounter
                 currentValue={product.quantity}
                 maxValue={10}
-                updatedQuantity={() => {}}
+                updatedQuantity={(value) =>
+                  onNewCartQuantityValue(product, value)
+                }
               />
             ) : (
               <Typography variant="h5">{`${product.quantity} ${
