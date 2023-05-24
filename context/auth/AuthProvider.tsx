@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { IUser } from '@/interfaces';
 import { AuthContext, authReducer } from './';
 import { tesloApi } from '@/api';
@@ -17,6 +17,25 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    try {
+      const { data } = await tesloApi.get('/user/validate-token'); // OJO: Axios manda las cookies en la request, pero para fetch toca especificar dicho mandato.
+      const { token, user } = data;
+      Cookies.set('token', token);
+      dispatch({ type: '[Auth] - Login', payload: user });
+      return true;
+    } catch (error) {
+      Cookies.remove('token');
+    }
+  };
+
+  // Antes de servir cada page, por medio de las cookies, yo puedo saber si el user esta autenticado o no.
+  // Static Page: Todo se sirve (crea) estaticamente de hacer una request.
 
   const loginUser = async (
     email: string,
