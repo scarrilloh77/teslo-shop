@@ -105,7 +105,15 @@ const LoginPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink legacyBehavior passHref href="/auth/register">
+              <NextLink
+                legacyBehavior
+                passHref
+                href={
+                  router.query.p
+                    ? `/auth/register?p=${router.query.p}`
+                    : '/auth/register'
+                }
+              >
                 <Link underline="always">No tienes cuenta?</Link>
               </NextLink>
             </Grid>
