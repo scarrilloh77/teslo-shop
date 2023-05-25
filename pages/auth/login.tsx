@@ -42,7 +42,8 @@ const LoginPage = () => {
       }, 3000);
       return;
     }
-    router.replace('/'); //No podra regresar a la pantalla anterior!
+    const destination = router.query.p?.toString() || '';
+    router.replace(destination); //No podra regresar a la pantalla anterior!
   };
 
   return (

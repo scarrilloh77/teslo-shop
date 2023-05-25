@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from 'react';
+import { useRouter } from 'next/router';
 import { IUser } from '@/interfaces';
 import { AuthContext, authReducer } from './';
 import { tesloApi } from '@/api';
@@ -17,12 +18,16 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+  const router = useRouter();
 
   useEffect(() => {
     checkToken();
   }, []);
 
   const checkToken = async () => {
+    if (!Cookies.get('token')) {
+      return;
+    }
     try {
       const { data } = await tesloApi.get('/user/validate-token'); // OJO: Axios manda las cookies en la request, pero para fetch toca especificar dicho mandato.
       const { token, user } = data;
@@ -83,8 +88,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logout = () => {
+    Cookies.remove('token');
+    Cookies.remove('cart');
+    router.reload();
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, loginUser, registerUser }}>
+    <AuthContext.Provider value={{ ...state, loginUser, registerUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
