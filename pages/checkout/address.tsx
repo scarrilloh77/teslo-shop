@@ -1,4 +1,3 @@
-import { GetServerSideProps } from 'next';
 import { ShopLayout } from '@/components/layouts';
 import {
   Box,
@@ -10,7 +9,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { jwt } from '@/utils';
 
 const AddressPage = () => {
   return (
@@ -69,30 +67,30 @@ const AddressPage = () => {
 
 export default AddressPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const { token = '' } = req.cookies;
-  let isValidToken = false;
+// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+//   const { token = '' } = req.cookies;
+//   let isValidToken = false;
 
-  try {
-    await jwt.isValidToken(token);
-    isValidToken = true;
-  } catch (error) {
-    isValidToken = false;
-  }
+//   try {
+//     await jwt.isValidToken(token);
+//     isValidToken = true;
+//   } catch (error) {
+//     isValidToken = false;
+//   }
 
-  if (!isValidToken) {
-    return {
-      redirect: {
-        destination: '/auth/login?p=/checkout/address',
-        permanent: false,
-      },
-    };
-  }
+//   if (!isValidToken) {
+//     return {
+//       redirect: {
+//         destination: '/auth/login?p=/checkout/address',
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  return {
-    props: {},
-  };
-};
+//   return {
+//     props: {},
+//   };
+// };
 
 // Esta page SOLO se debe mostrar si el user esta autenticado. Antes de cargarla, el server debe estar seguro:
 // Lo anterior era la alternativa antes de Next12...ahora:
