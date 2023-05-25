@@ -1,5 +1,8 @@
+import { useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { CartList, OrderSummary } from '@/components/cart';
 import { ShopLayout } from '@/components/layouts';
+import { CartContext } from '@/context';
 import {
   Box,
   Button,
@@ -10,6 +13,19 @@ import {
 } from '@mui/material';
 
 const CartPage = () => {
+  const { isLoaded, cart } = useContext(CartContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && cart.length === 0) {
+      router.replace('/cart/empty');
+    }
+  }, [isLoaded, cart, router]);
+
+  if (!isLoaded || cart.length === 0) {
+    return <></>; // Evitar renderizar cualquier cosa en el cliente.
+  }
+
   return (
     <ShopLayout
       title="Carrito - 3"
@@ -40,3 +56,5 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+// SSR Solo se hace en caso de ser estrictamente necesario. Hay que tener en mente tratar de que el server trabaje lo menos posible.
