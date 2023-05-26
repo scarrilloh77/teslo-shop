@@ -19,9 +19,10 @@ export const authOptions = {
           placeholder: 'Contraseña',
         },
       },
+      // @ts-ignore
       async authorize(credentials) {
-        console.log('credenciales', credentials);
-        return null;
+        // @ts-ignore
+        return { name: 'Juan', correo: 'juan@google.com', role: 'admin' };
       },
     }),
     GithubProvider({
@@ -33,7 +34,27 @@ export const authOptions = {
   // Callbacks
   // Por defecto, NextAuth.js maneja los callbacks con jwt.
   // Ahora NextAuth.js para requiere de la variable de entorno NEXTAUTH_SECRET para firmar los tokens.
-  callbacks: {},
+  callbacks: {
+    async jwt({ token, user, account }: any) {
+      if (account) {
+        token.accessToken = account.access_token;
+        switch (account.type) {
+          case 'oauth':
+            break;
+          case 'credentials':
+            token.user = user;
+            break;
+        }
+      }
+      return token;
+    },
+
+    async session({ session, token, user }: any) {
+      session.accessToken = token.accessToken;
+      session.user = token.user;
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);
