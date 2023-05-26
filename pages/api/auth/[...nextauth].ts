@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import Credentials from 'next-auth/providers/credentials';
+import { dbUsers } from '@/database';
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -19,10 +20,13 @@ export const authOptions = {
           placeholder: 'Contraseña',
         },
       },
-      // @ts-ignore
+      //@ts-ignore
       async authorize(credentials) {
-        // @ts-ignore
-        return { name: 'Juan', correo: 'juan@google.com', role: 'admin' };
+        console.log({ credentials });
+        return await dbUsers.checkUserEmailPassword(
+          credentials!.email,
+          credentials!.password
+        );
       },
     }),
     GithubProvider({
@@ -36,6 +40,7 @@ export const authOptions = {
   // Ahora NextAuth.js para requiere de la variable de entorno NEXTAUTH_SECRET para firmar los tokens.
   callbacks: {
     async jwt({ token, user, account }: any) {
+      // user es lo que se retorna en el callback de authorize.
       if (account) {
         token.accessToken = account.access_token;
         switch (account.type) {
@@ -49,7 +54,8 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token, user }: any) {
+    async session({ session, token }: any) {
+      // token es lo que retorna el callback de jwt.
       session.accessToken = token.accessToken;
       session.user = token.user;
       return session;
