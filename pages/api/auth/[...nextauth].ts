@@ -35,6 +35,12 @@ export const authOptions = {
     }),
   ],
 
+  // Custom pages
+  pages: {
+    signIn: '/auth/login', // Displays signin buttons
+    newUser: '/auth/register', // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
+
   // Callbacks
   // Por defecto, NextAuth.js maneja los callbacks con jwt.
   // Ahora NextAuth.js para requiere de la variable de entorno NEXTAUTH_SECRET para firmar los tokens.

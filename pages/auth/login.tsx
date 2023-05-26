@@ -1,6 +1,9 @@
 import { useContext, useState } from 'react';
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { getSession, signIn } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
 import { AuthLayout } from '@/components/layouts';
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
@@ -13,7 +16,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
 import { AuthContext } from '@/context';
 
 type FormData = {
@@ -33,17 +35,23 @@ const LoginPage = () => {
 
   const onLoginUser = async ({ email, password }: FormData) => {
     setShowError(false);
-    const isValidLogin = await loginUser(email, password);
 
-    if (!isValidLogin) {
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
-      return;
-    }
-    const destination = router.query.p?.toString() || '';
-    router.replace(destination); //No podra regresar a la pantalla anterior!
+    await signIn('credentials', {
+      email,
+      password,
+    });
+
+    // const isValidLogin = await loginUser(email, password);
+
+    // if (!isValidLogin) {
+    //   setShowError(true);
+    //   setTimeout(() => {
+    //     setShowError(false);
+    //   }, 3000);
+    //   return;
+    // }
+    // const destination = router.query.p?.toString() || '';
+    // router.replace(destination); //No podra regresar a la pantalla anterior!
   };
 
   return (
@@ -122,6 +130,27 @@ const LoginPage = () => {
       </form>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+
+  const { p = '/' } = query;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 };
 
 export default LoginPage;
