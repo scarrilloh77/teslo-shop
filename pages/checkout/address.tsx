@@ -12,6 +12,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useContext } from 'react';
+import { CartContext } from '@/context';
 
 type FormData = {
   firstName: string;
@@ -39,23 +41,21 @@ const getAddressFromCookies = () => {
 
 const AddressPage = () => {
   const router = useRouter();
+  const { updateAddress } = useContext(CartContext);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
 
+  //see the country value from useForm
+  console.log(watch('country'));
+
   const onSubmitAddres = (data: FormData) => {
-    Cookies.set('firstName', data.firstName);
-    Cookies.set('lastName', data.lastName);
-    Cookies.set('address', data.address);
-    Cookies.set('address2', data.address2 || '');
-    Cookies.set('zip', data.zip);
-    Cookies.set('city', data.city);
-    Cookies.set('country', data.country);
-    Cookies.set('phone', data.phone);
+    updateAddress(data);
     router.push('/checkout/summary');
   };
 
