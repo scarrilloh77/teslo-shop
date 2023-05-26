@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
 import { IUser } from '@/interfaces';
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    Cookies.remove('token');
     Cookies.remove('cart');
     Cookies.remove('firstName');
     Cookies.remove('lastName');
@@ -109,7 +108,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     Cookies.remove('city');
     Cookies.remove('country');
     Cookies.remove('phone');
-    router.reload();
+
+    signOut();
+    // Cookies.remove('token');
+    // router.reload();
   };
 
   return (
