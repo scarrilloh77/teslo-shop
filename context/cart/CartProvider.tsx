@@ -3,6 +3,7 @@ import { CartContext, cartReducer } from './';
 import { ICartProduct, IOrder, ShippingAddress } from '@/interfaces';
 import Cookie from 'js-cookie';
 import { tesloApi } from '@/api';
+import axios from 'axios';
 
 export interface CartState {
   isLoaded: boolean;
@@ -148,7 +149,10 @@ export const CartProvider: FC<Props> = ({ children }) => {
     });
   };
 
-  const createOrder = async () => {
+  const createOrder = async (): Promise<{
+    hasError: boolean;
+    message: string;
+  }> => {
     if (!state.shippingAddress) {
       throw new Error('No shipping address');
     }
@@ -167,9 +171,22 @@ export const CartProvider: FC<Props> = ({ children }) => {
     };
 
     try {
-      const { data } = await tesloApi.post('/orders', body);
+      const { data } = await tesloApi.post<IOrder>('/orders', body);
+      return {
+        hasError: false,
+        message: data._id!,
+      };
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response?.data.message,
+        };
+      }
+      return {
+        hasError: true,
+        message: 'Error no controlado, contacte al administrador',
+      };
     }
   };
 
