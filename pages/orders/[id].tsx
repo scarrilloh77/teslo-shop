@@ -12,7 +12,10 @@ import {
   Link,
   Typography,
 } from '@mui/material';
-import { CreditScoreOutlined } from '@mui/icons-material';
+import {
+  CreditCardOffOutlined,
+  CreditScoreOutlined,
+} from '@mui/icons-material';
 import { ShopLayout } from '@/components/layouts';
 import { CartList, OrderSummary } from '@/components/cart';
 import { dbOrders } from '@/database';
@@ -23,51 +26,65 @@ interface Props {
 }
 
 const OrderPage: NextPage<Props> = ({ order }) => {
-  console.log({ order });
+  const { shippingAddress } = order;
+  const { firstName, lastName, address, city, country, phone, zip, address2 } =
+    shippingAddress;
   return (
     <ShopLayout
-      title="Resumen de la orden 1234567"
+      title="Resumen de la orden"
       pageDescription="Resumen de la orden"
     >
       <Typography variant="h1" component="h1">
-        Ordern: ABC123
+        Orden: {order._id}
       </Typography>
-      {/* <Chip
-        sx={{ my: 2 }}
-        label="Pendiente de pago"
-        variant="outlined"
-        color="error"
-        icon={<CreditCardOffOutlined />}
-      /> */}
+
+      {order.isPaid ? (
+        <Chip
+          sx={{ my: 2 }}
+          label="Orden ya fue pagada"
+          variant="outlined"
+          color="success"
+          icon={<CreditScoreOutlined />}
+        />
+      ) : (
+        <Chip
+          sx={{ my: 2 }}
+          label="Pendiente de pago"
+          variant="outlined"
+          color="error"
+          icon={<CreditCardOffOutlined />}
+        />
+      )}
 
       <Grid container>
         <Grid item xs={12} sm={7}>
-          <CartList />
+          <CartList products={order.orderItems} />
         </Grid>
         <Grid item xs={12} sm={5}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h2">Resumen (3 productos)</Typography>
+              <Typography variant="h2">
+                Resumen ({order.numberOfItems}{' '}
+                {order.numberOfItems > 1 ? 'productos' : 'producto'})
+              </Typography>
               <Divider sx={{ my: 1 }} />
               <Box display="flex" justifyContent="space-between">
                 <Typography variant="subtitle1">
                   Dirección de entrega
                 </Typography>
-                <NextLink href="/checkout/address" passHref legacyBehavior>
-                  <Link underline="always">Editar</Link>
-                </NextLink>
               </Box>
-              <Typography>Sebastian Carrillo</Typography>
-              <Typography>Calle 42 #23C-15</Typography>
-              <Typography>Barranquilla</Typography>
-              <Typography>Colombia</Typography>
-              <Typography>+57 3209104958</Typography>
+              <Typography>
+                {firstName} {lastName}
+              </Typography>
+              <Typography>
+                {address} {address2 ? address2 : ''}
+              </Typography>
+              <Typography>
+                {city} {zip}
+              </Typography>
+              <Typography>{country}</Typography>
+              <Typography>{phone}</Typography>
               <Divider sx={{ my: 1 }} />
-              <Box display="flex" justifyContent="end">
-                <NextLink href="/cart" passHref legacyBehavior>
-                  <Link underline="always">Editar</Link>
-                </NextLink>
-              </Box>
               <OrderSummary />
               <Box sx={{ mt: 3 }}>
                 <h1>Pagar</h1>
