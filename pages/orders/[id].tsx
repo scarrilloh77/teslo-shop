@@ -9,7 +9,6 @@ import {
   Chip,
   Divider,
   Grid,
-  Link,
   Typography,
 } from '@mui/material';
 import {
@@ -85,16 +84,26 @@ const OrderPage: NextPage<Props> = ({ order }) => {
               <Typography>{country}</Typography>
               <Typography>{phone}</Typography>
               <Divider sx={{ my: 1 }} />
-              <OrderSummary />
-              <Box sx={{ mt: 3 }}>
-                <h1>Pagar</h1>
-                <Chip
-                  sx={{ my: 2 }}
-                  label="Orden pagada"
-                  variant="outlined"
-                  color="success"
-                  icon={<CreditScoreOutlined />}
-                />
+              <OrderSummary
+                orderValues={{
+                  numberOfItems: order.numberOfItems,
+                  subTotal: order.subTotal,
+                  tax: order.tax,
+                  total: order.total,
+                }}
+              />
+              <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
+                {order.isPaid ? (
+                  <Chip
+                    sx={{ my: 2 }}
+                    label="Orden pagada"
+                    variant="outlined"
+                    color="success"
+                    icon={<CreditScoreOutlined />}
+                  />
+                ) : (
+                  <h1>Pagar</h1>
+                )}
               </Box>
             </CardContent>
           </Card>
