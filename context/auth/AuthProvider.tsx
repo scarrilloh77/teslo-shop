@@ -1,6 +1,5 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useReducer } from 'react';
-import { useRouter } from 'next/router';
 import { IUser } from '@/interfaces';
 import { AuthContext, authReducer } from './';
 import { tesloApi } from '@/api';
@@ -20,7 +19,6 @@ const AUTH_INITIAL_STATE: AuthState = {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
   const { data, status } = useSession();
-  const router = useRouter();
 
   console.log('data', data);
 

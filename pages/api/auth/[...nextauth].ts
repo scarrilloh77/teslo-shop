@@ -22,7 +22,6 @@ export const authOptions = {
       },
       //@ts-ignore
       async authorize(credentials) {
-        console.log({ credentials });
         return await dbUsers.checkUserEmailPassword(
           credentials!.email,
           credentials!.password

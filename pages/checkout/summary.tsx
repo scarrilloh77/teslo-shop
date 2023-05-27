@@ -1,3 +1,6 @@
+import { useContext, useEffect } from 'react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { CartList, OrderSummary } from '@/components/cart';
 import { ShopLayout } from '@/components/layouts';
 import { CartContext } from '@/context';
@@ -11,11 +14,17 @@ import {
   Button,
   Link,
 } from '@mui/material';
-import NextLink from 'next/link';
-import { useContext } from 'react';
+import Cookies from 'js-cookie';
 
 const SummaryPage = () => {
+  const router = useRouter();
   const { shippingAddress, numberOfItems } = useContext(CartContext);
+
+  useEffect(() => {
+    if (!Cookies.get('firstName')) {
+      router.push('/checkout/address');
+    }
+  }, [router]);
 
   if (!shippingAddress) {
     return <></>;
@@ -35,10 +44,9 @@ const SummaryPage = () => {
         </Grid>
         <Grid item xs={12} sm={5}>
           <CardContent>
-            <Typography variant="h2">
-              Resumen ({numberOfItems} `$
-              {numberOfItems > 1 ? 'productos' : 'producto'}`)
-            </Typography>
+            <Typography variant="h2">{`Resumen (${numberOfItems} ${
+              numberOfItems !== 1 ? 'productos' : 'producto'
+            })`}</Typography>
             <Divider sx={{ my: 1 }} />
             <Box display="flex" justifyContent="space-between">
               <Typography variant="subtitle1">Dirección de entrega</Typography>
@@ -53,9 +61,7 @@ const SummaryPage = () => {
               {address} {address2 ? `, ${address2}` : ''}
             </Typography>
             <Typography>{city}</Typography>
-            <Typography>
-              {countries.find((c) => c.code === country)?.name}
-            </Typography>
+            <Typography>{country}</Typography>
             <Typography>{phone}</Typography>
             <Divider sx={{ my: 1 }} />
             <Box display="flex" justifyContent="end">

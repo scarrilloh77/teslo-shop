@@ -1,18 +1,9 @@
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
+import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import Cookies from 'js-cookie';
 import { ShopLayout } from '@/components/layouts';
-import { countries } from '@/utils';
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  MenuItem,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useContext } from 'react';
 import { CartContext } from '@/context';
 
 type FormData = {
@@ -47,9 +38,23 @@ const AddressPage = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
-    defaultValues: getAddressFromCookies(),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      address: '',
+      address2: '',
+      zip: '',
+      city: '',
+      country: '',
+      phone: '',
+    },
   });
+
+  useEffect(() => {
+    reset(getAddressFromCookies());
+  }, [reset]);
 
   const onSubmitAddres = (data: FormData) => {
     updateAddress(data);
@@ -135,24 +140,16 @@ const AddressPage = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <TextField
-                select
-                variant="filled"
-                label="País"
-                defaultValue={Cookies.get('country') || countries[0].code}
-                {...register('country', {
-                  required: 'Este campo es requerido',
-                })}
-                error={!!errors.country}
-              >
-                {countries.map((country) => (
-                  <MenuItem key={country.code} value={country.code}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
+            <TextField
+              variant="filled"
+              label="País"
+              fullWidth
+              {...register('country', {
+                required: 'Este campo es requerido',
+              })}
+              error={!!errors.country}
+              helperText={errors.country?.message}
+            ></TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
