@@ -168,7 +168,6 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
     try {
       const { data } = await tesloApi.post('/orders', body);
-      console.log({ data });
     } catch (error) {
       console.log(error);
     }
