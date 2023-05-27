@@ -2,6 +2,7 @@ import { FC, useEffect, useReducer } from 'react';
 import { CartContext, cartReducer } from './';
 import { ICartProduct, ShippingAddress } from '@/interfaces';
 import Cookie from 'js-cookie';
+import { tesloApi } from '@/api';
 
 export interface CartState {
   isLoaded: boolean;
@@ -147,6 +148,15 @@ export const CartProvider: FC<Props> = ({ children }) => {
     });
   };
 
+  const createOrder = async () => {
+    try {
+      const { data } = await tesloApi.post('/orders');
+      console.log({ data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -155,6 +165,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         updateCartQuantity,
         removeCartProduct,
         updateAddress,
+        createOrder,
       }}
     >
       {children}
