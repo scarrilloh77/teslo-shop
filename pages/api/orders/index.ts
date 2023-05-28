@@ -60,8 +60,6 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
     const backendTotal = subTotal * (taxRate + 1);
 
-    console.log({ total, backendTotal });
-
     if (total !== backendTotal) {
       throw new Error('El total no coincide con el monto calculado');
     }

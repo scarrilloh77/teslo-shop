@@ -1,7 +1,12 @@
-import { ShopLayout } from '@/components/layouts';
+import { NextPage, GetServerSideProps } from 'next';
+import NextLink from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]';
 import { Chip, Grid, Link, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import NextLink from 'next/link';
+import { dbOrders } from '@/database';
+import { ShopLayout } from '@/components/layouts';
+import { IOrder } from '@/interfaces';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 100 },
@@ -26,7 +31,11 @@ const columns: GridColDef[] = [
     sortable: false,
     renderCell: (params: GridRenderCellParams) => {
       return (
-        <NextLink href={`/orders/${params.row.id}`} passHref legacyBehavior>
+        <NextLink
+          href={`/orders/${params.row.orderId}`}
+          passHref
+          legacyBehavior
+        >
           <Link underline="always">Ver orden</Link>
         </NextLink>
       );
@@ -34,16 +43,18 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  { id: 1, paid: false, fullName: 'Alfonso Cantillo' },
-  { id: 2, paid: true, fullName: 'Yuliedis Garcia' },
-  { id: 3, paid: false, fullName: 'Laura Melina' },
-  { id: 4, paid: true, fullName: 'Catalina Gomez' },
-  { id: 5, paid: false, fullName: 'Stephania Thomas' },
-  { id: 6, paid: true, fullName: 'Pedro Gonzales' },
-];
+interface Props {
+  orders: IOrder[];
+}
 
-const HistoryPage = () => {
+const HistoryPage: NextPage<Props> = ({ orders }) => {
+  const rows = orders.map((order, idx) => ({
+    id: idx + 1,
+    paid: order.isPaid,
+    fullName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
+    orderId: order._id,
+  }));
+
   return (
     <ShopLayout
       title="Historial de ordens"
@@ -53,7 +64,7 @@ const HistoryPage = () => {
         Historial de ordenes
       </Typography>
 
-      <Grid container>
+      <Grid container className="fadeIn">
         <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
           <DataGrid
             rows={rows}
@@ -71,6 +82,27 @@ const HistoryPage = () => {
       </Grid>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auht/login?p=/orders/history`,
+        permanent: false,
+      },
+    };
+  }
+
+  const orders = await dbOrders.getOrdersByUser(session.user._id);
+
+  return {
+    props: {
+      orders,
+    },
+  };
 };
 
 export default HistoryPage;
