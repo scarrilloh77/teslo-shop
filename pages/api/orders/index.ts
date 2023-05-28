@@ -72,6 +72,9 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       isPaid: false,
       user: userId,
     });
+
+    newOrder.total = Math.round(newOrder.total * 100) / 100; // round to 2 decimals
+
     await newOrder.save();
     await db.disconnect();
     return res.status(201).json(newOrder);
