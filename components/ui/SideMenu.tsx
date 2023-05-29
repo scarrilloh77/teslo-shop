@@ -1,3 +1,5 @@
+import { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   Box,
   Divider,
@@ -24,9 +26,7 @@ import {
   SearchOutlined,
   VpnKeyOutlined,
 } from '@mui/icons-material';
-import { useContext, useState } from 'react';
 import { AuthContext, UiContext } from '@/context';
-import { useRouter } from 'next/router';
 
 export const SideMenu = () => {
   const router = useRouter();
@@ -162,9 +162,7 @@ export const SideMenu = () => {
                 <ListItemText primary={'Ordenes'} />
               </ListItemButton>
 
-              <ListItemButton
-                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
-              >
+              <ListItemButton onClick={() => navigateTo(`/admin/users`)}>
                 <ListItemIcon>
                   <AdminPanelSettings />
                 </ListItemIcon>
