@@ -1,5 +1,5 @@
 import { db, seedDatabase } from '@/database';
-import { Product, User } from '@/models';
+import { Order, Product, User } from '@/models';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = {
@@ -19,6 +19,7 @@ export default async function hanlder(
   await User.insertMany(seedDatabase.initialData.users);
   await Product.deleteMany();
   await Product.insertMany(seedDatabase.initialData.products);
+  await Order.deleteMany();
   await db.disconnect();
 
   res.status(200).json({ message: 'Proceso realizado correctamente' });
