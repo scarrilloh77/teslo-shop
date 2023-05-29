@@ -7,6 +7,7 @@ import {
   InputAdornment,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
@@ -14,8 +15,8 @@ import {
 import {
   AccountCircleOutlined,
   AdminPanelSettings,
-  CategoryOutlined,
   ConfirmationNumberOutlined,
+  DashboardOutlined,
   EscalatorWarningOutlined,
   FemaleOutlined,
   LoginOutlined,
@@ -146,25 +147,29 @@ export const SideMenu = () => {
               <Divider />
               <ListSubheader>Admin Panel</ListSubheader>
 
-              <ListItem button>
+              <ListItemButton onClick={() => navigateTo(`/admin/`)}>
                 <ListItemIcon>
-                  <CategoryOutlined />
+                  <DashboardOutlined />
                 </ListItemIcon>
-                <ListItemText primary={'Productos'} />
-              </ListItem>
-              <ListItem button>
+                <ListItemText primary={'Dashboard'} />
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+              >
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
                 <ListItemText primary={'Ordenes'} />
-              </ListItem>
+              </ListItemButton>
 
-              <ListItem button>
+              <ListItemButton
+                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+              >
                 <ListItemIcon>
                   <AdminPanelSettings />
                 </ListItemIcon>
                 <ListItemText primary={'Usuarios'} />
-              </ListItem>
+              </ListItemButton>
             </>
           )}
         </List>
