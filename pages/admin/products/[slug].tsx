@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import {
   DriveFileRenameOutline,
@@ -28,6 +28,7 @@ import { AdminLayout } from '../../../components/layouts';
 import { IProduct } from '../../../interfaces';
 import { dbProducts } from '../../../database';
 import { useForm } from 'react-hook-form';
+import { set } from 'mongoose';
 
 const validTypes = ['shirts', 'pants', 'hoodies', 'hats'];
 const validGender = ['men', 'women', 'kid', 'unisex'];
@@ -58,9 +59,25 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     formState: { errors },
     getValues,
     setValue, // set value controlled way, not do re-render by default
+    watch,
   } = useForm<FormData>({
     defaultValues: product,
   });
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (name === 'title') {
+        const newSlug =
+          value.title
+            ?.trim()
+            .replaceAll(' ', '_')
+            .replaceAll("'", '')
+            .toLowerCase() || '';
+        setValue('slug', newSlug, { shouldValidate: true });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
 
   const onChangeSize = (size: string) => {
     const currentSises = getValues('sizes');

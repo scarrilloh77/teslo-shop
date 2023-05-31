@@ -61,9 +61,6 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   const { transactionId = '', orderId = '' } = req.body;
 
-  console.log({ paypalBearerToken });
-  console.log(`${process.env.PAYPAL_ORDERS_URL}/${transactionId}`);
-
   const { data } = await axios.get<IPaypal.PaypalOrderStatusResponse>(
     `${process.env.PAYPAL_ORDERS_URL}/${transactionId}`,
     {
@@ -72,8 +69,6 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       },
     }
   );
-
-  console.log({ data });
 
   if (data.status !== 'COMPLETED') {
     res.status(401).json({ message: 'Orden no reconocida' });
