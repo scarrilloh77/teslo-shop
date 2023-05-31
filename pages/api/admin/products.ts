@@ -19,6 +19,9 @@ export default function (req: NextApiRequest, res: NextApiResponse<Data>) {
     case 'PUT':
       return updateProduct(req, res);
 
+    case 'POST':
+      return createProduct(req, res);
+
     default:
       res.status(400).json({ message: 'Bad request!' });
   }
@@ -58,5 +61,38 @@ const updateProduct = async (
     console.log(error);
     await db.disconnect();
     res.status(400).json({ message: 'Revisar la consola del servidor!' });
+  }
+};
+
+const createProduct = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { images = [] } = req.body as IProduct;
+  if (images.length < 2) {
+    res.status(400).json({ message: 'Es necesario al menos 2 imágenes!' });
+  }
+
+  try {
+    await db.connect();
+
+    const productInDB = await Product.findOne({ slug: req.body.slug });
+
+    if (productInDB) {
+      await db.disconnect();
+      return res
+        .status(400)
+        .json({ message: 'Ya existes el producto con ese slug!' });
+    }
+
+    const product = new Product(req.body); // validations are gestioned in the model
+    await product.save();
+    await db.disconnect();
+
+    res.status(201).json(product);
+  } catch (error) {
+    console.log(error);
+    await db.disconnect();
+    return res.status(400).json({ message: 'Revisar logs servidor!' });
   }
 };
