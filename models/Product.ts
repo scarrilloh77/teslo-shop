@@ -33,8 +33,8 @@ const productSchema = new Schema(
         values: ['men', 'women', 'kid', 'unisex'],
         message: '{VALUE} no es un genero valido',
       },
+      default: 'women',
     },
-    default: 'women',
   },
   {
     timestamps: true, // Para tener el createAt

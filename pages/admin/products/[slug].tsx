@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import {
   DriveFileRenameOutline,
   SaveOutlined,
@@ -29,6 +30,7 @@ import { IProduct } from '../../../interfaces';
 import { dbProducts } from '../../../database';
 import { useForm } from 'react-hook-form';
 import { tesloApi } from '@/api';
+import { Product } from '@/models';
 
 const validTypes = ['shirts', 'pants', 'hoodies', 'hats'];
 const validGender = ['men', 'women', 'kid', 'unisex'];
@@ -53,6 +55,7 @@ interface Props {
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
+  const router = useRouter();
   const [newTagValue, setNewTagValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const {
@@ -117,12 +120,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     try {
       const { data } = await tesloApi({
         url: `/admin/products`,
-        method: 'PUT',
+        method: form._id ? 'PUT' : 'POST',
         data: form,
       });
       console.log({ data });
       if (!form._id) {
-        // TODO: Recargar el navegador!
+        router.replace(`/admin/products/${form.slug}`); // replace dont allow back button
       } else {
         setIsSaving(false);
       }
@@ -367,7 +370,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = '' } = query;
 
-  const product = await dbProducts.getProductBySlug(slug.toString());
+  let product: IProduct | null;
+
+  if (slug === 'new') {
+    const tempProduct = JSON.parse(JSON.stringify(new Product()));
+    delete tempProduct._id;
+    tempProduct.images = ['img1.png', 'img2.png'];
+    product = tempProduct;
+  } else {
+    product = await dbProducts.getProductBySlug(slug.toString());
+  }
 
   if (!product) {
     return {
