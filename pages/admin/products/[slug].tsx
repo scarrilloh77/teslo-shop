@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
   DriveFileRenameOutline,
@@ -28,7 +28,6 @@ import { AdminLayout } from '../../../components/layouts';
 import { IProduct } from '../../../interfaces';
 import { dbProducts } from '../../../database';
 import { useForm } from 'react-hook-form';
-import { set } from 'mongoose';
 
 const validTypes = ['shirts', 'pants', 'hoodies', 'hats'];
 const validGender = ['men', 'women', 'kid', 'unisex'];
@@ -53,6 +52,7 @@ interface Props {
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
+  const [newTagValue, setNewTagValue] = useState('');
   const {
     register,
     handleSubmit,
@@ -91,7 +91,21 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     setValue('sizes', [...currentSises, size], { shouldValidate: true });
   };
 
-  const onDeleteTag = (tag: string) => {};
+  const onNewTag = () => {
+    const newTag = newTagValue.trim().toLocaleLowerCase();
+    setNewTagValue('');
+    const currentTags = getValues('tags');
+    if (currentTags.includes(newTag)) {
+      return;
+    }
+    currentTags.push(newTag); // all objects in js are passed by reference
+    // setValue('tags', currentTags, { shouldValidate: true }); // Is not necessary because push is a mutable method
+  };
+
+  const onDeleteTag = (tag: string) => {
+    const updatedTags = getValues('tags').filter((t) => t !== tag);
+    setValue('tags', updatedTags, { shouldValidate: true });
+  };
 
   const onSubmit = (form: FormData) => {
     console.log({ form });
@@ -253,6 +267,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               fullWidth
               sx={{ mb: 1 }}
               helperText="Presiona [spacebar] para agregar"
+              value={newTagValue}
+              onChange={(e) => setNewTagValue(e.target.value)}
+              onKeyUp={({ code }) => code === 'Space' && onNewTag()}
             />
 
             <Box
@@ -265,7 +282,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               }}
               component="ul"
             >
-              {product.tags.map((tag) => {
+              {getValues('tags').map((tag) => {
                 return (
                   <Chip
                     key={tag}
