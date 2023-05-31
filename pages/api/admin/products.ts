@@ -40,7 +40,7 @@ const updateProduct = async (
     res.status(400).json({ message: 'El id del producto no es válido!' });
   }
 
-  if (images.length <= 2) {
+  if (images.length < 2) {
     res.status(400).json({ message: 'Es necesario al menos 2 imágenes!' });
   }
 
