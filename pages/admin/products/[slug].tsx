@@ -124,7 +124,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           '/admin/upload',
           formData
         );
-        console.log({ data });
       }
     } catch (error) {
       console.log(error);
@@ -142,7 +141,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         method: form._id ? 'PUT' : 'POST',
         data: form,
       });
-      console.log({ data });
       if (!form._id) {
         router.replace(`/admin/products/${form.slug}`); // replace dont allow back button
       } else {
