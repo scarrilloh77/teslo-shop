@@ -10,12 +10,11 @@ export const ProductSlideShow = ({ images }: Props) => {
   return (
     <Slide easing="ease" duration={5000} indicators>
       {images?.map((image) => {
-        const url = `/products/${image}`;
         return (
           <div className={styles['eacth-slide']} key={image}>
             <div
               style={{
-                backgroundImage: `url(${url})`,
+                backgroundImage: `url(${image})`,
                 backgroundSize: 'cover',
               }}
             ></div>
