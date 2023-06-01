@@ -124,10 +124,21 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           '/admin/upload',
           formData
         );
+        setValue('images', [...getValues('images'), data.message], {
+          shouldValidate: true,
+        });
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const ondeleteImage = (image: string) => {
+    setValue(
+      'images',
+      getValues('images').filter((img) => img !== image),
+      { shouldValidate: true }
+    );
   };
 
   const onSubmit = async (form: FormData) => {
@@ -367,17 +378,21 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues('images').map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card>
                       <CardMedia
                         component="img"
                         className="fadeIn"
-                        image={`/products/${img}`}
+                        image={img}
                         alt={img}
                       />
                       <CardActions>
-                        <Button fullWidth color="error">
+                        <Button
+                          fullWidth
+                          color="error"
+                          onClick={() => ondeleteImage(img)}
+                        >
                           Borrar
                         </Button>
                       </CardActions>
