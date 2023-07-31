@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {
   AppBar,
@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { CartContext, UiContext } from '@/context';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export const Navbar = () => {
   const { asPath, push } = useRouter();
@@ -26,18 +27,24 @@ export const Navbar = () => {
   const { numberOfItems } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const debouncedValue = useDebounce(searchTerm, 500);
 
   const onSearchTerm = () => {
     if (searchTerm.trim().length === 0) return;
     push(`/search/${searchTerm}`);
   };
 
+  useEffect(() => {
+    if (debouncedValue.trim().length === 0) return;
+    push(`/search/${debouncedValue}`);
+  }, [debouncedValue]);
+
   return (
     <AppBar>
       <Toolbar>
-        <NextLink legacyBehavior href="/" passHref>
-          <Link display="flex" alignItems="center">
-            <Typography variant="h6">Teslo |</Typography>
+        <NextLink legacyBehavior href='/' passHref>
+          <Link display='flex' alignItems='center'>
+            <Typography variant='h6'>Teslo |</Typography>
             <Typography sx={{ ml: 0.5 }}>Shop</Typography>
           </Link>
         </NextLink>
@@ -46,23 +53,23 @@ export const Navbar = () => {
           sx={{
             display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' },
           }}
-          className="fadeIn"
+          className='fadeIn'
         >
-          <NextLink legacyBehavior href="/category/men" passHref>
+          <NextLink legacyBehavior href='/category/men' passHref>
             <Link>
               <Button color={asPath === '/category/men' ? 'primary' : 'info'}>
                 Hombres
               </Button>
             </Link>
           </NextLink>
-          <NextLink legacyBehavior href="/category/women" passHref>
+          <NextLink legacyBehavior href='/category/women' passHref>
             <Link>
               <Button color={asPath === '/category/women' ? 'primary' : 'info'}>
                 Mujeres
               </Button>
             </Link>
           </NextLink>
-          <NextLink legacyBehavior href="/category/kid" passHref>
+          <NextLink legacyBehavior href='/category/kid' passHref>
             <Link>
               <Button color={asPath === '/category/kid' ? 'primary' : 'info'}>
                 Niños
@@ -77,15 +84,15 @@ export const Navbar = () => {
             sx={{
               display: { xs: 'none', sm: 'flex' },
             }}
-            className="fadeIn"
+            className='fadeIn'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => (e.key === 'Enter' ? onSearchTerm() : null)}
-            type="text"
-            placeholder="Buscar..."
+            type='text'
+            placeholder='Buscar...'
             autoFocus
             endAdornment={
-              <InputAdornment position="end">
+              <InputAdornment position='end'>
                 <IconButton onClick={() => setIsSearchVisible(false)}>
                   <ClearOutlined />
                 </IconButton>
@@ -98,7 +105,7 @@ export const Navbar = () => {
               display: { xs: 'none', sm: 'flex' },
             }}
             onClick={() => setIsSearchVisible(true)}
-            className="fadeIn"
+            className='fadeIn'
           >
             <SearchOutlined />
           </IconButton>
@@ -110,12 +117,12 @@ export const Navbar = () => {
         >
           <SearchOutlined />
         </IconButton>
-        <NextLink legacyBehavior href="/cart" passHref>
+        <NextLink legacyBehavior href='/cart' passHref>
           <Link>
             <IconButton>
               <Badge
                 badgeContent={numberOfItems > 9 ? '+9' : numberOfItems}
-                color="secondary"
+                color='secondary'
               >
                 <ShoppingCartOutlined />
               </Badge>
